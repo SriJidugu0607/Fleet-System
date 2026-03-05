@@ -1,7 +1,8 @@
-'use server'
+"use server"
 
-import { prisma } from '@/lib/prisma'
-import { getSupabaseServer } from '@/lib/supabase-server'
+import { prisma } from "@/lib/prisma"
+import { getSupabaseServer } from "@/lib/supabase-server"
+import { revalidatePath } from "next/cache"
 
 export async function addMaintenance(formData: FormData) {
   const supabase = await getSupabaseServer()
