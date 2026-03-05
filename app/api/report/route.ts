@@ -128,10 +128,10 @@ export async function GET(req: Request) {
 
   const pdfBytes = await pdf.save()
 
-  return new NextResponse(pdfBytes, {
-    headers: {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": "attachment; filename=fleet-report.pdf",
-    },
-  })
+return new NextResponse(Buffer.from(pdfBytes), {
+  headers: {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": "attachment; filename=fleet-report.pdf",
+  },
+})
 }
