@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Company {
+  id                String             @id @default(uuid())
+  name              String
+  createdAt         DateTime           @default(now())
+  drivers           Driver[]
+  driverPayments    DriverPayment[]
+  expenses          Expense[]
+  maintenance       Maintenance[]
+  trips             Trip[]
+  users             User[]
+  vehicles          Vehicle[]
+  recurringPayments RecurringPayment[]
+}
+
+model Vehicle {
+  id                    String             @id @default(uuid())
+  companyId             String
+  vehicleNo             String
+  type                  String
+  capacityTons          Int?
+  status                String             @default("active")
+  createdAt             DateTime           @default(now())
+  nextServiceDate       DateTime?
+  serviceIntervalMonths Int?               @default(6)
+  transport             String?
+  maintenance           Maintenance[]
+  trips                 Trip[]
+  company               Company            @relation(fields: [companyId], references: [id])
+  recurringPayments     RecurringPayment[]
+}
+
+model Driver {
+  id              String          @id @default(uuid())
+  companyId       String
+  name            String
+  phone           String
+  licenseNo       String?
+  status          String          @default("active")
+  paymentCycle    String          @default("monthly")
+  lastPaymentDate DateTime?
+  createdAt       DateTime        @default(now())
+  company         Company         @relation(fields: [companyId], references: [id])
+  trips           Trip[]
+  payments        DriverPayment[]
+}
+
+model Trip {
+  id              String    @id @default(cuid())
+  companyId       String
+  vehicleId       String
+  driverId        String
+  origin          String
+  destination     String
+  tripDate        DateTime  @default(now())
+  freight         Int
+  status          String    @default("OPEN")
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  currentLocation String?
+  endTime         DateTime?
+  startedAt       DateTime?
+  expenses        Expense[]
+  company         Company   @relation(fields: [companyId], references: [id])
+  driver          Driver    @relation(fields: [driverId], references: [id])
+  vehicle         Vehicle   @relation(fields: [vehicleId], references: [id])
+}
+
+model Expense {
+  id        String   @id @default(uuid())
+  companyId String
+  tripId    String
+  type      String
+  amount    Int
+  notes     String?
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id])
+  trip      Trip     @relation(fields: [tripId], references: [id])
+}
+
+model Maintenance {
+  id        String   @id @default(uuid())
+  companyId String
+  vehicleId String
+  date      DateTime @default(now())
+  type      String
+  cost      Int
+  notes     String?
+  company   Company  @relation(fields: [companyId], references: [id])
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  authId    String   @unique
+  email     String
+  companyId String
+  createdAt DateTime @default(now())
+  company   Company  @relation(fields: [companyId], references: [id])
+}
+
+model DriverPayment {
+  id        String   @id @default(cuid())
+  driverId  String
+  companyId String
+  amount    Int
+  date      DateTime @default(now())
+  notes     String?
+  company   Company  @relation(fields: [companyId], references: [id])
+  driver    Driver   @relation(fields: [driverId], references: [id])
+
+  @@index([companyId])
+  @@index([driverId])
+}
+
+model RecurringPayment {
+  id        String @id @default(uuid())
+  companyId String
+
+  title  String
+  type   String
+  amount Int
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  frequency String
+
+  dueDate      DateTime
+  lastPaidDate DateTime?
+
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id])
+}
