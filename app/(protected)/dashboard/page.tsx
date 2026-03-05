@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation'
 import { unstable_noStore as noStore } from 'next/cache'
 import { logout } from '@/app/logout-action'
 import { translations } from "@/lib/translations"
-import LanguageSwitcher from "@/components/LanguageSwitcher"
-
+{/*import LanguageSwitcher from "@/components/languageswitcher"
+*/}
 
 export default async function Home() {
   noStore()
@@ -138,24 +138,17 @@ export default async function Home() {
     <main className="p-6 md:p-10 bg-gray-100 text-gray-800 min-h-screen">
 
       {/* Header */}
+<div className="flex justify-between items-center mb-6">
 
-      <div className="flex justify-between items-center mb-8">
-
-  <h1 className="text-3xl font-bold text-gray-800">
-    🚛 Smart Transport Dashboard
+  <h1 className="text-2xl md:text-3xl font-bold">
+    🚛 Fleet Management Dashboard
   </h1>
 
-  <div className="flex gap-3 items-center">
-
-    
-
-    <form action={logout}>
-      <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">
-        Logout
-      </button>
-    </form>
-
-  </div>
+  <form action={logout}>
+    <button className="bg-red-600 px-4 py-2 rounded shadow hover:bg-red-700">
+      Logout
+    </button>
+  </form>
 
 </div>
 
