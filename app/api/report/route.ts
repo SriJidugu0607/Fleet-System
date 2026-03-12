@@ -97,8 +97,8 @@ export async function GET(req: Request) {
 
     // prevent text overflow
     if (y < 50) {
-      y = 750
-      pdf.addPage([600, 800])
+      const newPage = pdf.addPage([600, 800])
+       y = 750
     }
 
   }

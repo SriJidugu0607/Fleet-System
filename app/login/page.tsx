@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+
   const router = useRouter()
 
   const supabase = createBrowserClient(
@@ -14,35 +15,57 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [mode, setMode] = useState<'login' | 'signup'>('login')
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    if (mode === 'login') {
 
-    if (error) {
-      alert(error.message)
-      return
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        alert(error.message)
+        return
+      }
+
+      router.refresh()
+      router.push('/')
+
+    } else {
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password
+      })
+
+      if (error) {
+        alert(error.message)
+        return
+      }
+
+      alert('Account created. Please login.')
+      setMode('login')
     }
-
-    // IMPORTANT: refresh so server can read cookie
-    router.refresh()
-    router.push('/')
   }
 
   return (
     <main style={{ padding: 40 }}>
-      <h1>Login</h1>
 
-      <form onSubmit={handleLogin}>
+      <h1>{mode === 'login' ? 'Login' : 'Create Account'}</h1>
+
+      <form onSubmit={handleSubmit}>
+
         <input
           placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
+
+        <br /><br />
 
         <input
           placeholder="Password"
@@ -51,8 +74,32 @@ export default function LoginPage() {
           onChange={e => setPassword(e.target.value)}
         />
 
-        <button type="submit">Login</button>
+        <br /><br />
+
+        <button type="submit">
+          {mode === 'login' ? 'Login' : 'Sign Up'}
+        </button>
+
       </form>
+
+      <br />
+
+      {mode === 'login' ? (
+        <p>
+          New user?{" "}
+          <button onClick={() => setMode('signup')}>
+            Create account
+          </button>
+        </p>
+      ) : (
+        <p>
+          Already have an account?{" "}
+          <button onClick={() => setMode('login')}>
+            Login
+          </button>
+        </p>
+      )}
+
     </main>
   )
 }
