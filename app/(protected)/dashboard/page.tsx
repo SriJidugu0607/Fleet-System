@@ -4,7 +4,7 @@ import { getSupabaseServer } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { unstable_noStore as noStore } from 'next/cache'
 import { logout } from '@/app/logout-action'
-import { translations } from "@/lib/translations"
+{/*import { translations } from "@/lib/translations" */}
 {/*import LanguageSwitcher from "@/components/languageswitcher"
 */}
 
@@ -145,7 +145,7 @@ export default async function Home() {
   </h1>
 
   <form action={logout}>
-    <button className="bg-red-600 px-4 py-2 rounded shadow hover:bg-red-700">
+    <button className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700">
       Logout
     </button>
   </form>
